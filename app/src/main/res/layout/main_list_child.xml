@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_ssid_name"
+        android:text="@string/ssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
+    <TextView
+        android:id="@+id/tv_ssid_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/tv_ssid_name" />
+
+    <TextView
+        android:id="@+id/tv_capabilities_name"
+        android:text="@string/capabilities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tv_ssid_name" />
+
+    <TextView
+        android:id="@+id/tv_capabilities_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_capabilities_name"
+        android:layout_below="@id/tv_ssid_name"/>
+
+    <TextView
+        android:id="@+id/tv_frequency_name"
+        android:text="@string/frequency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tv_capabilities_name"/>
+
+    <TextView
+        android:id="@+id/tv_frequency_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_frequency_name"
+        android:layout_below="@id/tv_capabilities_name"/>
+
+    <TextView
+        android:id="@+id/tv_level_name"
+        android:text="@string/level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tv_frequency_name"/>
+
+    <TextView
+        android:id="@+id/tv_level_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_level_name"
+        android:layout_below="@id/tv_frequency_name"/>
+
+</RelativeLayout>

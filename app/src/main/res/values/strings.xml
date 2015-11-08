@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">WiFiScannerLog</string>
+
+    <string name="bssid">BSSID: </string>
+    <string name="ssid">SSID: </string>
+    <string name="capabilities">capabilities: </string>
+    <string name="frequency">frequency: </string>
+    <string name="channle">channle: </string>
+    <string name="level">level: </string>
+
+</resources>
