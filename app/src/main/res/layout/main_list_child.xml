@@ -13,10 +13,11 @@
         android:layout_alignParentLeft="true" />
     <TextView
         android:id="@+id/tv_ssid_value"
-        android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/tv_ssid_name" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tv_ssid_name" />
 
     <TextView
         android:id="@+id/tv_capabilities_name"
@@ -24,14 +25,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/tv_ssid_name" />
+        android:layout_below="@id/tv_ssid_value" />
 
     <TextView
         android:id="@+id/tv_capabilities_value"
-        android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tv_capabilities_name"
-        android:layout_below="@id/tv_ssid_name"/>
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tv_capabilities_name"/>
 
     <TextView
         android:id="@+id/tv_frequency_name"
@@ -39,14 +41,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/tv_capabilities_name"/>
+        android:layout_below="@id/tv_capabilities_value"/>
 
     <TextView
         android:id="@+id/tv_frequency_value"
-        android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tv_frequency_name"
-        android:layout_below="@id/tv_capabilities_name"/>
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tv_frequency_name"/>
 
     <TextView
         android:id="@+id/tv_level_name"
@@ -54,13 +57,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/tv_frequency_name"/>
+        android:layout_below="@id/tv_frequency_value"/>
 
     <TextView
         android:id="@+id/tv_level_value"
-        android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tv_level_name"
-        android:layout_below="@id/tv_frequency_name"/>
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tv_level_name"/>
 
 </RelativeLayout>

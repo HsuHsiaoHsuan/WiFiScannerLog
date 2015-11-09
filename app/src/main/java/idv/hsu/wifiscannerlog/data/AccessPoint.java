@@ -5,15 +5,15 @@ public class AccessPoint {
     private String bssid;
     private String ssid;
     private String capabilities;
-    private String frequency;
-    private String level;
+    private int frequency;
+    private int level;
 
-    public AccessPoint (String bssid, String ssid, String capabilities, String frequency, String levle) {
+    public AccessPoint (String bssid, String ssid, String capabilities, int frequency, int level) {
         this.bssid = bssid;
         this.ssid = ssid;
         this.capabilities = capabilities;
         this.frequency = frequency;
-        this.level = levle;
+        this.level = level;
     }
 
     public String getBssid() {
@@ -28,11 +28,11 @@ public class AccessPoint {
         return capabilities;
     }
 
-    public String getFrequency() {
+    public int getFrequency() {
         return frequency;
     }
 
-    public String getLevel() {
+    public int getLevel() {
         return level;
     }
 }

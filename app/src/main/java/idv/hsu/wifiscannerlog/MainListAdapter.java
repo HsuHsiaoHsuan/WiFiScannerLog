@@ -105,8 +105,8 @@ public class MainListAdapter extends BaseExpandableListAdapter {
         AccessPoint ap = childData.get(groupPosition).get(childPosition);
         holder.tv_ssid.setText(ap.getSsid());
         holder.tv_capabilities.setText(ap.getCapabilities());
-        holder.tv_frequency.setText(ap.getFrequency());
-        holder.tv_level.setText(ap.getLevel());
+        holder.tv_frequency.setText(String.valueOf(ap.getFrequency()));
+        holder.tv_level.setText(String.valueOf(ap.getLevel()));
 
         return rowView;
     }
