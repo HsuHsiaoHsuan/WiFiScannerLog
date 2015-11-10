@@ -4,11 +4,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.io.IOException;
 import java.util.List;
 
 import idv.hsu.wifiscannerlog.data.AccessPoint;
+import idv.hsu.wifiscannerlog.data.EnumChannels;
+import idv.hsu.wifiscannerlog.data.LogDbHelper;
+import idv.hsu.wifiscannerlog.data.WifiChannels;
 
 public class MainListAdapter extends BaseExpandableListAdapter {
     private static final String TAG = MainListAdapter.class.getSimpleName();
@@ -17,11 +24,16 @@ public class MainListAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private List<String> groupData;
     private List<List<AccessPoint>> childData;
+    private WifiChannels<EnumChannels> channles;
+
+    private LogDbHelper dbHelper;
 
     public MainListAdapter(LayoutInflater inflater, List<String> group, List<List<AccessPoint>> child) {
         this.inflater = inflater;
         groupData = group;
         childData = child;
+        channles = new WifiChannels<EnumChannels>(EnumChannels.class);
+        dbHelper = new LogDbHelper(inflater.getContext());
     }
 
     @Override
@@ -61,8 +73,12 @@ public class MainListAdapter extends BaseExpandableListAdapter {
 
     private static class GroupViewHolder {
         private TextView tv_title;
+        private TextView tv_manufacturer;
+        private ImageView iv_favor;
         public GroupViewHolder(View view) {
-            tv_title = (TextView)view.findViewById(R.id.tv_title);
+            tv_title = (TextView) view.findViewById(R.id.tv_title);
+            tv_manufacturer = (TextView) view.findViewById(R.id.tv_manufacturer);
+            iv_favor = (ImageView) view.findViewById(R.id.iv_favor);
         }
     }
 
@@ -76,6 +92,9 @@ public class MainListAdapter extends BaseExpandableListAdapter {
         }
         final GroupViewHolder holder = (GroupViewHolder) rowView.getTag();
         holder.tv_title.setText(groupData.get(groupPosition));
+        holder.tv_manufacturer.setText("MANUFACTURER");
+        boolean isFavor = dbHelper.isBssidSaved(groupData.get(groupPosition));
+        holder.iv_favor.setImageResource(isFavor? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_black_24dp);
 
         return rowView;
     }
@@ -105,7 +124,15 @@ public class MainListAdapter extends BaseExpandableListAdapter {
         AccessPoint ap = childData.get(groupPosition).get(childPosition);
         holder.tv_ssid.setText(ap.getSsid());
         holder.tv_capabilities.setText(ap.getCapabilities());
-        holder.tv_frequency.setText(String.valueOf(ap.getFrequency()));
+        StringBuilder channel = new StringBuilder("");
+        try {
+            String tmp = channles.getChannel(ap.getFrequency()).toString();
+            String[] tmpArray = tmp.split("_");
+            channel.append("  (" + tmpArray[1] + " " + tmpArray[2] + ")");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        holder.tv_frequency.setText(String.valueOf(ap.getFrequency()) + channel);
         holder.tv_level.setText(String.valueOf(ap.getLevel()));
 
         return rowView;
