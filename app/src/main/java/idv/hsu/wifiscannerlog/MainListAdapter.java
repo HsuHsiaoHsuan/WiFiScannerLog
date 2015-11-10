@@ -126,9 +126,11 @@ public class MainListAdapter extends BaseExpandableListAdapter {
         holder.tv_capabilities.setText(ap.getCapabilities());
         StringBuilder channel = new StringBuilder("");
         try {
-            String tmp = channles.getChannel(ap.getFrequency()).toString();
-            String[] tmpArray = tmp.split("_");
-            channel.append("  (" + tmpArray[1] + " " + tmpArray[2] + ")");
+            if (channles.getChannel(ap.getFrequency()) != null) {
+                String tmp = channles.getChannel(ap.getFrequency()).toString();
+                String[] tmpArray = tmp.split("_");
+                channel.append("  (" + tmpArray[1] + " " + tmpArray[2] + ")");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -31,10 +31,15 @@ public class LogDbHelper extends SQLiteOpenHelper {
                         LogDbSchema.CAPABILITIES + " TEXT, " +
                         LogDbSchema.FREQUENCY + " TEXT, " +
                         LogDbSchema.LEVEL + " TEXT, " +
-                        LogDbSchema.TIME + " DATETIME DEFAULT CURRENT_TIMESTAMP, " +
+                        LogDbSchema.TIME + " TEXT, " +
                         LogDbSchema.LOCATION + " TEXT);"
 // http://stackoverflow.com/questions/754684/how-to-insert-a-sqlite-record-with-a-datetime-set-to-now-in-android-applicatio
         );
+//        this.db.execSQL(
+//                "CREATE TABLE " + LogDbSchema.TABLE_TRACE_BSSID + "(" +
+//                        LogDbSchema.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                        LogDbSchema.BSSID + " TEXT NOT NULL);"
+//        );
     }
 
     @Override
@@ -43,12 +48,14 @@ public class LogDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insert(ContentValues values) {
+    public long insertTrackingBSSID(ContentValues values) {
         db = getWritableDatabase();
         long result = db.insert(LogDbSchema.TABLE_LOG, null, values);
 
         return result;
     }
+
+//    public long insertFavorBSSID
 
     public Cursor queryAll() {
         db = getReadableDatabase();
