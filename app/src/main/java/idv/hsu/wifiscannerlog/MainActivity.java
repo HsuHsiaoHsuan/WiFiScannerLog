@@ -11,16 +11,16 @@ import android.content.IntentSender;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,7 +31,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import idv.hsu.wifiscannerlog.data.AccessPoint;
@@ -83,18 +82,39 @@ public class MainActivity extends AppCompatActivity
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 int itemType = ExpandableListView.getPackedPositionType(id);
 
-                if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) { // long press on a group
                     int groupPosition = ExpandableListView.getPackedPositionGroup(id);
                     Toast.makeText(MainActivity.this, groupList.get(groupPosition), Toast.LENGTH_SHORT).show();
-                    List<AccessPoint> tmpList = childList.get(groupPosition);
-                    for (int x = 0; x < tmpList.size(); x++) {
-                        if (D) {
-                            System.out.println("WTF! " + tmpList.get(x).getSsid());
+                    // It's favor
+                    if ( dbHelper.isBssidSaved(groupList.get(groupPosition)) ) {
+                        int result = dbHelper.delete(groupList.get(groupPosition));
+                        if (result > 0) {
+                            ((ImageView) view.findViewById(R.id.iv_favor)).setImageResource(R.drawable.ic_favorite_black_24dp);
+                            Toast.makeText(MainActivity.this, "del favor ok.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                    // It's not favor.
+                        List<AccessPoint> tmpList = childList.get(groupPosition);
+                        for (int x = 0; x < tmpList.size(); x++) {
+                            if (D) {
+                                System.out.println("WTF! " + tmpList.get(x).getSsid());
+                            }
+                            AccessPoint tmpAp = tmpList.get(x);
+                            ContentValues values = new ContentValues();
+                            values.put(LogDbSchema.BSSID, tmpAp.getBssid());
+                            values.put(LogDbSchema.SSID, tmpAp.getSsid());
+                            values.put(LogDbSchema.CAPABILITIES, tmpAp.getCapabilities());
+                            values.put(LogDbSchema.FREQUENCY, tmpAp.getFrequency());
+                            values.put(LogDbSchema.LEVEL, tmpAp.getLevel());
+                            values.put(LogDbSchema.TIME, System.currentTimeMillis());
+                            values.put(LogDbSchema.LOCATION, mCurrentLocation.toString());
+                            long result = dbHelper.insertTrackingBSSID(values);
+                            if (result != -1) {
+                                Toast.makeText(MainActivity.this, "add favor ok.", Toast.LENGTH_SHORT).show();
+                                ((ImageView) view.findViewById(R.id.iv_favor)).setImageResource(R.drawable.ic_favorite_red_24dp);
+                            }
                         }
                     }
-//                    ContentValues values = new ContentValues();
-//                    values.put(LogDbSchema.BSSID, );
-//                    dbHelper.insertTrackingBSSID(values);
                     return true;
                 }
                 return false;

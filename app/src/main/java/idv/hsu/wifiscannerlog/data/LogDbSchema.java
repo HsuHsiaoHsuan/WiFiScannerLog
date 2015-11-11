@@ -20,5 +20,6 @@ public class LogDbSchema {
 
     public static final String LOCATION = "LOCATION";
 
-    public static final String TABLE_TRACE_BSSID = "bssid";
+//    public static final String TABLE_TRACE_BSSID = "bssid";
+    public static final String TABLE_MANUFACTURE = "manufacture";
 }
