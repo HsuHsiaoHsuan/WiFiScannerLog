@@ -7,6 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import au.com.bytecode.opencsv.CSVReader;
+
 public class LogDbHelper extends SQLiteOpenHelper {
     private static final String TAG = LogDbHelper.class.getSimpleName();
     private static final boolean D = true;
@@ -35,11 +42,13 @@ public class LogDbHelper extends SQLiteOpenHelper {
                         LogDbSchema.LOCATION + " TEXT);"
 // http://stackoverflow.com/questions/754684/how-to-insert-a-sqlite-record-with-a-datetime-set-to-now-in-android-applicatio
         );
-//        this.db.execSQL(
-//                "CREATE TABLE " + LogDbSchema.TABLE_TRACE_BSSID + "(" +
-//                        LogDbSchema.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//                        LogDbSchema.BSSID + " TEXT NOT NULL);"
-//        );
+        this.db.execSQL(
+                "CREATE TABLE " + LogDbSchema.TABLE_MANUFACTURE + "(" +
+                        LogDbSchema.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        LogDbSchema.MAC + " TEXT, " +
+                        LogDbSchema.MANUFACTURE + " TEXT, " +
+                        LogDbSchema.ADDRESS + " TEXT);"
+        );
     }
 
     @Override
@@ -55,7 +64,12 @@ public class LogDbHelper extends SQLiteOpenHelper {
         return result;
     }
 
-//    public long insertFavorBSSID
+    public long insertManufactureData(ContentValues values) {
+        db = getWritableDatabase();
+        long result = db.insert(LogDbSchema.TABLE_MANUFACTURE, null, values);
+
+        return result;
+    }
 
     public Cursor queryAll() {
         db = getReadableDatabase();
@@ -101,6 +115,23 @@ public class LogDbHelper extends SQLiteOpenHelper {
             if(D) Log.d(TAG, "query(id) : cursor null");
             cursor.close();
             return false;
+        }
+    }
+
+    public String queryManufacture(String mac) {
+        String query = mac.replace(":", "").substring(0, 6).toUpperCase();
+        db = getReadableDatabase();
+        Cursor cursor = db.query(LogDbSchema.TABLE_MANUFACTURE,
+                new String[] {LogDbSchema.MAC, LogDbSchema.MANUFACTURE},
+                LogDbSchema.MAC + "=?", new String[] {query}, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                return cursor.getString(cursor.getColumnIndexOrThrow(LogDbSchema.MANUFACTURE));
+            } else {
+                return "";
+            }
+        } else {
+            return "";
         }
     }
 

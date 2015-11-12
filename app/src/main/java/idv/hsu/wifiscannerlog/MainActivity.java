@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -33,30 +34,43 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import idv.hsu.wifiscannerlog.data.AccessPoint;
 import idv.hsu.wifiscannerlog.data.LogDbHelper;
 import idv.hsu.wifiscannerlog.data.LogDbSchema;
+import idv.hsu.wifiscannerlog.event.Event_CsvImportOk;
 
 public class MainActivity extends AppCompatActivity
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final boolean D = true;
 
+    // Wifi
     WifiManager wifiManager;
     WifiScanReceiver wifiScanReceiver;
 
+    // UI
     private ExpandableListView list;
     private MainListAdapter adapter;
     private List<String> groupList = new ArrayList<String>();
     private List<List<AccessPoint>> childList = new ArrayList<List<AccessPoint>>();
     private LogDbHelper dbHelper;
+
+    // Location
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Location mCurrentLocation;
+
+    // Google Api Client
     private static final int REQUEST_RESOLVE_ERROR = 1001; // Request code to use when launching the resolution activity
     private static final String DIALOG_ERROR = "dialog_error"; // Unique tag for the error dialog fragment
     private boolean mResolvingError = false; // Bool to track whether the app is already resolving an error
     private static final String STATE_RESOLVING_ERROR = "resolving_error";
+
+    // IntentService
+    private Intent intentCsvImport = new Intent();
+    public static final String PREF_IMPORTED = "IMPORTED";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +164,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         registerReceiver(wifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        EventBus.getDefault().register(this);
 
         wifiManager.setWifiEnabled(true);
         wifiManager.startScan();
@@ -157,13 +172,24 @@ public class MainActivity extends AppCompatActivity
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
         }
+
+        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+        boolean isImported = pref.getBoolean(PREF_IMPORTED, false);
+        if (!isImported) {
+            intentCsvImport.setClass(MainActivity.this, ImportCsvService.class);
+            startService(intentCsvImport);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(wifiScanReceiver);
-        stopLocationUpdates();
+        EventBus.getDefault().unregister(this);
+        if (mGoogleApiClient.isConnected()) {
+            stopLocationUpdates();
+        }
+        stopService(intentCsvImport);
     }
 
     @Override
@@ -332,5 +358,14 @@ public class MainActivity extends AppCompatActivity
         public void onDismiss(DialogInterface dialog) {
             ((MainActivity) getActivity()).onDialogDismissed();
         }
+    }
+
+    public void onEventMainThread(Event_CsvImportOk event) {
+        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(PREF_IMPORTED, true);
+        editor.commit();
+
+        wifiManager.startScan();
     }
 }

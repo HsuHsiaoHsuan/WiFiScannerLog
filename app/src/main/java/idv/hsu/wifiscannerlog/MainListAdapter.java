@@ -93,6 +93,7 @@ public class MainListAdapter extends BaseExpandableListAdapter {
         final GroupViewHolder holder = (GroupViewHolder) rowView.getTag();
         holder.tv_title.setText(groupData.get(groupPosition));
         holder.tv_manufacturer.setText("MANUFACTURER");
+        holder.tv_manufacturer.setText(dbHelper.queryManufacture(groupData.get(groupPosition)));
         boolean isFavor = dbHelper.isBssidSaved(groupData.get(groupPosition));
         holder.iv_favor.setImageResource(isFavor? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_black_24dp);
 

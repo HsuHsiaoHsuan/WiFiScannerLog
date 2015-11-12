@@ -2,7 +2,8 @@ package idv.hsu.wifiscannerlog.data;
 
 public class LogDbSchema {
 
-    public static final String TABLE_LOG = "log";
+    // TABLE LOG
+    public static final String TABLE_LOG = "mac_log";
 
     public static final String ID = "_id";
 
@@ -21,5 +22,13 @@ public class LogDbSchema {
     public static final String LOCATION = "LOCATION";
 
 //    public static final String TABLE_TRACE_BSSID = "bssid";
-    public static final String TABLE_MANUFACTURE = "manufacture";
+
+    // TABLE WIFI MANUFACTURE
+    public static final String TABLE_MANUFACTURE = "mac_manufacture";
+
+    public static final String MAC = "MAC";
+
+    public static final String MANUFACTURE = "MANUFACTURE";
+
+    public static final String ADDRESS = "ADDRESS";
 }
