@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -55,10 +56,11 @@ public class MainActivity extends AppCompatActivity
     private List<String> groupList = new ArrayList<String>();
     private List<List<AccessPoint>> childList = new ArrayList<List<AccessPoint>>();
     private LogDbHelper dbHelper;
+    private TextView tv_location;
 
     // Location
     private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
+//    private Location mLastLocation;
     private Location mCurrentLocation;
 
     // Google Api Client
@@ -103,14 +105,14 @@ public class MainActivity extends AppCompatActivity
                     int groupPosition = ExpandableListView.getPackedPositionGroup(id);
                     Toast.makeText(MainActivity.this, groupList.get(groupPosition), Toast.LENGTH_SHORT).show();
                     // It's favor
-                    if ( dbHelper.isBssidSaved(groupList.get(groupPosition)) ) {
+                    if (dbHelper.isBssidSaved(groupList.get(groupPosition))) {
                         int result = dbHelper.delete(groupList.get(groupPosition));
                         if (result > 0) {
                             ((ImageView) view.findViewById(R.id.iv_favor)).setImageResource(R.drawable.ic_favorite_black_24dp);
                             Toast.makeText(MainActivity.this, "del favor ok.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                    // It's not favor.
+                        // It's not favor.
                         List<AccessPoint> tmpList = childList.get(groupPosition);
                         for (int x = 0; x < tmpList.size(); x++) {
                             if (D) {
@@ -147,6 +149,8 @@ public class MainActivity extends AppCompatActivity
                 wifiManager.startScan();
             }
         });
+
+        tv_location = (TextView) findViewById(R.id.tv_location);
     }
 
     @Override
@@ -167,7 +171,6 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         registerReceiver(wifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-//        EventBus.getDefault().register(this);
 
         wifiManager.setWifiEnabled(true);
         wifiManager.startScan();
@@ -181,11 +184,9 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         unregisterReceiver(wifiScanReceiver);
-//        EventBus.getDefault().unregister(this);
         if (mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
         }
-//        stopService(intentCsvImport);
     }
 
     @Override
@@ -251,6 +252,7 @@ public class MainActivity extends AppCompatActivity
         if (D) {
             Log.d(TAG, "CurrentLocation: " + mCurrentLocation.toString());
         }
+        tv_location.setText(mCurrentLocation.toString());
     }
 
     private class WifiScanReceiver extends BroadcastReceiver {

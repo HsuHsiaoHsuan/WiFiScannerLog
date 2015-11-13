@@ -1,5 +1,6 @@
 package idv.hsu.wifiscannerlog;
 
+import android.content.ContentValues;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import java.util.List;
 import idv.hsu.wifiscannerlog.data.AccessPoint;
 import idv.hsu.wifiscannerlog.data.EnumChannels;
 import idv.hsu.wifiscannerlog.data.LogDbHelper;
+import idv.hsu.wifiscannerlog.data.LogDbSchema;
 import idv.hsu.wifiscannerlog.data.WifiChannels;
 
 public class MainListAdapter extends BaseExpandableListAdapter {
@@ -100,9 +102,16 @@ public class MainListAdapter extends BaseExpandableListAdapter {
         holder.tv_title.setText(groupData.get(groupPosition));
         holder.tv_manufacturer.setText(dbHelper.queryManufacture(groupData.get(groupPosition)));
         boolean isFavor = dbHelper.isBssidSaved(groupData.get(groupPosition));
-        holder.iv_favor.setImageResource(isFavor? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_black_24dp);
+        holder.iv_favor.setImageResource(isFavor ? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_black_24dp);
 
-        return rowView;
+        if (isFavor) {
+            List<AccessPoint> list = childData.get(groupPosition);
+            for (int x = 0; x < list.size(); x++) {
+                ContentValues values = new ContentValues();
+                values.put(LogDbSchema.BSSID, list.get(x).getBssid());
+                values.put(LogDbSchema.SSID, list.get(x).getSsid());
+            }
+        }
     }
 
     private static class ChildViewHolder {
