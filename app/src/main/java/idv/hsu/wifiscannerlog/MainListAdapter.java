@@ -7,8 +7,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -34,6 +32,14 @@ public class MainListAdapter extends BaseExpandableListAdapter {
         childData = child;
         channles = new WifiChannels<EnumChannels>(EnumChannels.class);
         dbHelper = new LogDbHelper(inflater.getContext());
+        try {
+            dbHelper.create();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new Error("Unable to copy database.");
+        }
+        dbHelper.open();
+        dbHelper.getReadableDatabase();
     }
 
     @Override
@@ -92,7 +98,6 @@ public class MainListAdapter extends BaseExpandableListAdapter {
         }
         final GroupViewHolder holder = (GroupViewHolder) rowView.getTag();
         holder.tv_title.setText(groupData.get(groupPosition));
-        holder.tv_manufacturer.setText("MANUFACTURER");
         holder.tv_manufacturer.setText(dbHelper.queryManufacture(groupData.get(groupPosition)));
         boolean isFavor = dbHelper.isBssidSaved(groupData.get(groupPosition));
         holder.iv_favor.setImageResource(isFavor? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_black_24dp);

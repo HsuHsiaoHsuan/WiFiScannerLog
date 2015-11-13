@@ -1,6 +1,8 @@
 package idv.hsu.wifiscannerlog.data;
 
 public class LogDbSchema {
+    // DATABASE
+    public static final String DB_NAME = "data.db";
 
     // TABLE LOG
     public static final String TABLE_LOG = "mac_log";
@@ -28,7 +30,7 @@ public class LogDbSchema {
 
     public static final String MAC = "MAC";
 
-    public static final String MANUFACTURE = "MANUFACTURE";
+    public static final String MANUFACTURE = "MANUFACTURER";
 
     public static final String ADDRESS = "ADDRESS";
 }

@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -31,14 +30,14 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import idv.hsu.wifiscannerlog.data.AccessPoint;
 import idv.hsu.wifiscannerlog.data.LogDbHelper;
 import idv.hsu.wifiscannerlog.data.LogDbSchema;
-import idv.hsu.wifiscannerlog.event.Event_CsvImportOk;
+//import idv.hsu.wifiscannerlog.event.Event_CsvImportOk;
 
 public class MainActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -68,10 +67,6 @@ public class MainActivity extends AppCompatActivity
     private boolean mResolvingError = false; // Bool to track whether the app is already resolving an error
     private static final String STATE_RESOLVING_ERROR = "resolving_error";
 
-    // IntentService
-    private Intent intentCsvImport = new Intent();
-    public static final String PREF_IMPORTED = "IMPORTED";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +78,14 @@ public class MainActivity extends AppCompatActivity
         mGoogleApiClient.connect();
 
         dbHelper = new LogDbHelper(this);
+        try {
+            dbHelper.create();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new Error("Unable to copy database.");
+        }
+        dbHelper.open();
+        dbHelper.getWritableDatabase();
 
         wifiScanReceiver = new WifiScanReceiver();
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -164,7 +167,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         registerReceiver(wifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
 
         wifiManager.setWifiEnabled(true);
         wifiManager.startScan();
@@ -172,24 +175,17 @@ public class MainActivity extends AppCompatActivity
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
         }
-
-        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
-        boolean isImported = pref.getBoolean(PREF_IMPORTED, false);
-        if (!isImported) {
-            intentCsvImport.setClass(MainActivity.this, ImportCsvService.class);
-            startService(intentCsvImport);
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(wifiScanReceiver);
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
         if (mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
         }
-        stopService(intentCsvImport);
+//        stopService(intentCsvImport);
     }
 
     @Override
@@ -358,14 +354,5 @@ public class MainActivity extends AppCompatActivity
         public void onDismiss(DialogInterface dialog) {
             ((MainActivity) getActivity()).onDialogDismissed();
         }
-    }
-
-    public void onEventMainThread(Event_CsvImportOk event) {
-        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(PREF_IMPORTED, true);
-        editor.commit();
-
-        wifiManager.startScan();
     }
 }
