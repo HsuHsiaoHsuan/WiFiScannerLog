@@ -112,6 +112,7 @@ public class MainListAdapter extends BaseExpandableListAdapter {
                 values.put(LogDbSchema.SSID, list.get(x).getSsid());
             }
         }
+        return rowView;
     }
 
     private static class ChildViewHolder {

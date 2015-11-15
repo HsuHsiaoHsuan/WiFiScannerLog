@@ -120,14 +120,14 @@ public class LogDbHelper extends SQLiteOpenHelper {
     }
 
     public boolean isBssidSaved(String bssid) {
-        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-
-        if (c.moveToFirst()) {
-            while ( !c.isAfterLast() ) {
-                System.out.println("NAME:" + c.getString(0));
-                c.moveToNext();
-            }
-        }
+//        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+//
+//        if (c.moveToFirst()) {
+//            while ( !c.isAfterLast() ) {
+//                System.out.println("NAME:" + c.getString(0));
+//                c.moveToNext();
+//            }
+//        }
 
         Cursor cursor = db.query(LogDbSchema.TABLE_LOG,
                 new String[] {LogDbSchema.BSSID,
